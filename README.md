@@ -56,7 +56,8 @@ AccessLint is licensed under the MIT License. See [LICENSE](LICENSE).
 
 ## AI disclosure
 
-Development assistance used: **[Coding assistants planned: OpenCode, Google Antigravity and OpenAI Codex. No closed AI API planned inside the product MVP.
-]**.
+**Coding assistants planned for development:** OpenCode, Google Antigravity, and OpenAI Codex.
 
-AI APIs used: **[NVIDIA API ]**.
+**AI API used for coding assistance:** NVIDIA API.
+
+**AI API in the product:** The MVP is planned to use deterministic, rule-based checks without an AI API.
