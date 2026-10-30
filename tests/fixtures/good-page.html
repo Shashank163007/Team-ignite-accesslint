@@ -1,0 +1,95 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>AccessLint Accessible Example</title>
+    <style>
+      :root {
+        color: #1f2937;
+        background: #ffffff;
+        font-family: Arial, sans-serif;
+        line-height: 1.5;
+      }
+
+      body {
+        margin: 0 auto;
+        max-width: 60rem;
+        padding: 1rem;
+      }
+
+      a {
+        color: #075985;
+      }
+
+      .button {
+        background: #155e75;
+        border: 2px solid #155e75;
+        border-radius: 0.25rem;
+        color: #ffffff;
+        cursor: pointer;
+        display: inline-block;
+        font: inherit;
+        padding: 0.5rem 1rem;
+        text-decoration: none;
+      }
+
+      .button:hover {
+        background: #0c4a6e;
+        border-color: #0c4a6e;
+      }
+
+      :focus-visible {
+        outline: 3px solid #b45309;
+        outline-offset: 3px;
+      }
+
+      label {
+        display: block;
+        font-weight: bold;
+        margin-top: 1rem;
+      }
+
+      input {
+        border: 1px solid #374151;
+        border-radius: 0.25rem;
+        box-sizing: border-box;
+        display: block;
+        font: inherit;
+        margin-top: 0.25rem;
+        max-width: 24rem;
+        padding: 0.5rem;
+        width: 100%;
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <p><strong>AccessLint</strong></p>
+      <nav aria-label="Primary navigation">
+        <a href="#about">About accessibility</a>
+      </nav>
+    </header>
+
+    <main>
+      <h1>Accessible example page</h1>
+      <p id="about">
+        This deterministic fixture contains semantic structure, labelled form
+        controls, keyboard-accessible controls, and visible focus styles.
+      </p>
+
+      <section aria-labelledby="signup-heading">
+        <h2 id="signup-heading">Subscribe for updates</h2>
+        <form action="#" method="post">
+          <label for="email">Email address</label>
+          <input id="email" name="email" type="email" autocomplete="email" required>
+          <button class="button" type="submit">Subscribe</button>
+        </form>
+      </section>
+    </main>
+
+    <footer>
+      <p>Accessibility matters to everyone.</p>
+    </footer>
+  </body>
+</html>
