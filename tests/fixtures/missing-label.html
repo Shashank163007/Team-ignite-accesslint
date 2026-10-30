@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>AccessLint Label Fixture</title>
+    <style>
+      :root {
+        background: #ffffff;
+        color: #1f2937;
+        font-family: Arial, sans-serif;
+        line-height: 1.5;
+      }
+
+      body {
+        margin: 0 auto;
+        max-width: 60rem;
+        padding: 1rem;
+      }
+
+      input,
+      button {
+        font: inherit;
+        margin-top: 0.5rem;
+        padding: 0.5rem;
+      }
+
+      button {
+        background: #155e75;
+        border: 2px solid #155e75;
+        border-radius: 0.25rem;
+        color: #ffffff;
+      }
+    </style>
+  </head>
+  <body>
+    <main>
+      <h1>Form label test page</h1>
+      <p>
+        This page contains one form control without an accessible label for
+        the accessibility scanner to identify.
+      </p>
+      <form action="#" method="post">
+        <input id="missing-label-input" name="search" type="search" placeholder="Search">
+        <button type="submit">Search</button>
+      </form>
+    </main>
+  </body>
+</html>
