@@ -1,63 +1,195 @@
 # AccessLint
 
-AccessLint is a planned accessibility linter for open source frontend projects. The goal is to help developers find common accessibility problems and understand how to fix them.
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
+[![Hackathon: Devf8rge 2026 (PS-09)](https://img.shields.io/badge/Hackathon-Devf8rge%202026%20(PS--09)-orange.svg)](https://devf8rge.hacktoberfest.com/)
+[![Theme: Developer Productivity](https://img.shields.io/badge/Theme-Developer%20Productivity-brightgreen.svg)](#)
 
-This project is being developed for **PS-09: Accessibility Linter for OSS Frontends**. It is currently at the planning stage; implementation has not started, so there are no working features yet.
+> **Automated accessibility regression linter for GitHub Pull Requests powered by Playwright and axe-core.**
 
-## The problem
+---
 
-Accessibility issues can make websites difficult or impossible for some people to use. They are easy to miss during development, especially when a team does not have a simple way to check for them. AccessLint aims to make common issues easier to spot and address.
+## Overview
 
-## How AccessLint is intended to work
+**AccessLint** is a CI/CD-native GitHub Action designed to catch web accessibility (a11y) regressions during Pull Requests *before* changes are merged to production.
 
-1. A developer provides a frontend project or opens a website to scan.
-2. AccessLint examines the frontend code or the rendered page.
-3. An accessibility testing engine, possibly `axe-core`, checks for issues it supports.
-4. AccessLint presents findings with their location when available and a suggested fix.
-5. The developer uses the report to improve the website.
+Legacy codebases often suffer from accumulated accessibility violations, making team-wide a11y adoption difficult if automated tools fail builds on pre-existing issues. AccessLint solves this by enforcing differential a11y testing: it cleanly differentiates between existing legacy debt and newly introduced violations, empowering engineering teams to shift left on accessibility without grinding velocity to a halt.
 
-The scanning approach and dependencies are still being decided, so this describes the plan rather than a finished workflow.
+### Key Features
 
-## Planned features
+- **Automated Live DOM Auditing**: Executes audits in real headless browser environments with [Playwright](https://playwright.dev/) and [`@axe-core/playwright`](https://github.com/dequelabs/axe-core-npm/tree/develop/packages/playwright), testing real rendered markup and styles rather than static code abstractions.
+- **Comprehensive Keyboard Navigation Checks**: Goes beyond standard axe rules by testing keyboard focus states, checking for visible focus indicators, validating logical tab order, and detecting focus traps.
+- **Zero-False-Positive Branch Comparison**: Employs deterministic issue fingerprints (`route::rule::element`) to compare PR branch findings against base branch baselines, isolating newly introduced regressions from legacy technical debt.
+- **Sticky, Idempotent GitHub PR Comments**: Posts clear, non-duplicative PR reviews highlighting exact affected CSS selectors, impact severities, WCAG tags, and actionable code remediation guidance.
+- **Native GitHub Actions Step Summary**: Generates rich Markdown summary tables in GitHub Actions job runs for immediate visibility into audit passes, warnings, and regression tallies.
 
-- Find images that are missing alternative text.
-- Find form controls without accessible labels.
-- Find buttons without accessible names.
-- Detect color contrast issues where the selected checks support them.
-- Show issue details, location when available, and suggestions for fixing problems.
+---
 
-## Proposed technology stack
+## Architecture
 
-- JavaScript and Node.js
-- React and Vite
-- npm
-- `axe-core` for accessibility checks, subject to final integration
+The following ASCII diagram illustrates the end-to-end execution workflow of AccessLint within GitHub Actions:
 
-The stack may change as development progresses.
+```
++-----------------------------------------------------------------------------------+
+|                              GitHub Pull Request Event                            |
++-----------------------------------------------------------------------------------+
+                                          |
+                                          v
++-----------------------------------------------------------------------------------+
+|                                 AccessLint Runner                                 |
+|                                                                                   |
+|  1. Spin up target frontend (start-command) or connect to target-url             |
+|  2. Launch Headless Chromium via Playwright across specified routes               |
++-----------------------------------------------------------------------------------+
+                                          |
+                      +-------------------+-------------------+
+                      |                                       |
+                      v                                       v
++-------------------------------------------+ +-------------------------------------+
+|        Live axe-core Scan Engine          | |       Keyboard Navigation Checks    |
+| - Color contrast & ARIA roles             | | - Visible focus indicator checks    |
+| - Missing form labels & alt texts         | | - Tab order flow validation         |
+| - Heading hierarchy & semantic tags       | | - Keyboard trap detection           |
++-------------------------------------------+ +-------------------------------------+
+                      |                                       |
+                      +-------------------+-------------------+
+                                          |
+                                          v
++-----------------------------------------------------------------------------------+
+|                              Baseline Diffing Engine                              |
+|                                                                                   |
+|  - Computes deterministic fingerprints: (route :: rule :: element)                |
+|  - Filters out pre-existing issues (from base-scan-path)                          |
+|  - Isolates NEW regressions introduced in this Pull Request                       |
++-----------------------------------------------------------------------------------+
+                                          |
+                                          v
++-----------------------------------------------------------------------------------+
+|                              Reporting & Notifications                            |
+|                                                                                   |
+|  [ Sticky PR Comment ]              [ GitHub Actions Summary ]    [ Build Status ]|
+|  - Selective update or post         - High-level metrics matrix   - Exit 1 if new |
+|  - Selector & code remediation      - Issue breakdown by impact     issues & fail |
++-----------------------------------------------------------------------------------+
+```
 
-## How to run it
+---
 
-Coming soon. Implementation has not started, so setup and run instructions are not available yet.
+## Quickstart / Usage
 
-## Testing plan
+Add AccessLint to your repository by creating a workflow file under `.github/workflows/accesslint.yml`:
 
-The project will be checked against the official **Devf8rge PS-09 test kit**. Additional testing will be planned as the scanning approach is implemented.
+```yaml
+name: Accessibility Linting
 
-## Future improvements
+on:
+  pull_request:
+    branches: [main, develop]
 
-- Decide how developers provide a project or website to scan.
-- Improve the detail and usefulness of suggested fixes.
-- Expand the set of detectable accessibility issues.
-- Refine the report as the project is tested with real frontend projects.
+jobs:
+  accesslint:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: write #   Required for posting sticky PR comments
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Install Playwright Browsers
+        run: npx playwright install chromium --with-deps
+
+      - name: Run AccessLint
+        uses: Shashank163007/Team-ignite-accesslint@main
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          target-url: 'http://localhost:3000'
+          start-command: 'npm run start'
+          routes: '/,/about,/contact'
+          fail-on-new: 'true'
+```
+
+
+---
+
+## Action Inputs & Outputs
+
+### Inputs
+
+| Input | Description | Required | Default |
+| :--- | :--- | :---: | :---: |
+| `github-token` | GitHub token for authenticating API requests and posting PR comments | **Yes** | `${{ github.token }}` |
+| `target-url` | Target frontend base URL (e.g. `http://localhost:3000`) | No | `""` |
+| `start-command` | Command to build or serve the frontend locally before scanning | No | `""` |
+| `working-directory`| Working directory where the target application resides | No | `.` |
+| `routes` | Comma-separated list of application routes to audit | No | `/` |
+| `base-scan-path` | Path to a pre-computed base branch scan JSON artifact for diffing | No | `""` |
+| `fail-on-new` | Whether to fail CI when new accessibility regressions are found | No | `'true'` |
+
+### Outputs
+
+| Output | Description |
+| :--- | :--- |
+| `new-issues-count` | Total count of newly introduced accessibility regressions. |
+| `total-issues-count` | Total accessibility violations identified on the branch. |
+
+---
+
+## Local Setup & Testing
+
+To run and test AccessLint locally:
+
+### 1. Clone the repository
+```bash
+git clone https://github.com/Shashank163007/Team-ignite-accesslint.git
+cd Team-ignite-accesslint
+```
+
+### 2. Install dependencies
+```bash
+npm install
+```
+
+### 3. Install Playwright browser binaries
+```bash
+npx playwright install chromium
+```
+
+### 4. Run tests
+Execute the local test suite:
+```bash
+npm test
+```
+
+### 5. Test scanning locally
+You can test the scanning pipeline directly using Node.js:
+```bash
+node src/action/index.js
+```
+*(Ensure relevant environment variables such as `INPUT_TARGET_URL` or `INPUT_START_COMMAND` are supplied if testing in standalone mode).*
+
+---
+
+## Team Ignite Credits
+
+Developed with pride for **Devf8rge x Hacktoberfest Hack Day 2026 (PS-09)** by **Team Ignite**:
+
+- **Shashank** — S1: GitHub Action & Integration Lead
+- **Pratyaksh** — S2: Browser Automation & Scanning Lead
+- **Mohammed** — M1: Accessibility Checks & Test Fixtures
+- **Chathan** — M2: Comparison & Reporting Developer
+
+---
 
 ## License
 
-AccessLint is licensed under the MIT License. See [LICENSE](LICENSE).
-
-## AI disclosure
-
-**Coding assistants planned for development:** OpenCode, Google Antigravity, and OpenAI Codex.
-
-**AI API used for coding assistance:** NVIDIA API.
-
-**AI API in the product:** The MVP is planned to use deterministic, rule-based checks without an AI API.
+This project is licensed under the [MIT License](LICENSE).

@@ -1,0 +1,47 @@
+name: 'AccessLint'
+description: 'Automated accessibility linter for PRs using axe-core and headless browser checks'
+author: 'Team Ignite'
+
+inputs:
+  github-token:
+    description: 'GitHub token for posting PR comments'
+    required: true
+    default: ${{ github.token }}
+  target-url:
+    description: 'Target frontend base URL (e.g. http://localhost:3000)'
+    required: false
+    default: ''
+  start-command:
+    description: 'Command to build/serve the frontend locally'
+    required: false
+    default: ''
+  working-directory:
+    description: 'Working directory for the target app'
+    required: false
+    default: '.'
+  routes:
+    description: 'Comma-separated routes to audit (e.g. /,/about,/contact)'
+    required: false
+    default: '/'
+  base-scan-path:
+    description: 'Path to pre-computed base branch scan JSON artifact'
+    required: false
+    default: ''
+  fail-on-new:
+    description: 'Whether to fail CI when new accessibility issues are detected'
+    required: false
+    default: 'true'
+
+outputs:
+  new-issues-count:
+    description: 'Total number of newly introduced accessibility issues'
+  total-issues-count:
+    description: 'Total accessibility issues detected on PR branch'
+
+runs:
+  using: 'node20'
+  main: 'src/action/index.js'
+
+branding:
+  icon: 'check-circle'
+  color: 'blue'

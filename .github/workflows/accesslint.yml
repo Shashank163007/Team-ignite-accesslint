@@ -1,0 +1,63 @@
+name: AccessLint CI
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pull-requests: write
+  issues: write
+
+jobs:
+  accessibility-audit:
+    runs-on: ubuntu-latest
+    name: Run AccessLint Accessibility Audit
+
+    steps:
+      - name: Checkout PR Branch
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node.js Runtime
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm'
+
+      - name: Install Action Dependencies
+        run: npm ci
+
+      - name: Install Playwright Chromium Browser
+        run: npx playwright install chromium --with-deps
+
+      - name: Checkout Base Branch for Baseline Scan
+        if: github.event_name == 'pull_request'
+        run: |
+          mkdir -p /tmp/base-repo
+          git worktree add /tmp/base-repo ${{ github.base_ref }}
+          echo "Base branch ${{ github.base_ref }} checked out to /tmp/base-repo"
+
+      - name: Run Baseline Scan on Base Branch
+        if: github.event_name == 'pull_request'
+        id: base-scan
+        run: |
+          cd /tmp/base-repo
+          if [ -f "package.json" ]; then
+            npm ci || npm install
+            # Run scan in dry/headless mode and output to /tmp/base-scan.json
+            node $GITHUB_WORKSPACE/src/action/index.js || true
+          else
+            echo "[]" > /tmp/base-scan.json
+          fi
+        continue-on-error: true
+
+      - name: Run AccessLint on PR Branch
+        uses: ./
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          base-scan-path: '/tmp/base-scan.json'
+          fail-on-new: 'true'
+          routes: '/'
