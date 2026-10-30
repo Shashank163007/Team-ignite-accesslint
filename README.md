@@ -90,7 +90,7 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: read
-      pull-requests: write # Required for posting sticky PR comments
+      pull-requests: write #   Required for posting sticky PR comments
 
     steps:
       - name: Checkout repository
@@ -117,6 +117,7 @@ jobs:
           routes: '/,/about,/contact'
           fail-on-new: 'true'
 ```
+
 
 ---
 
