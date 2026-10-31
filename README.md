@@ -14,7 +14,6 @@
 ## 🌟 Live Demos & Links
 
 - 🌐 **Live Hosted Landing Page**: [team-ignite-accesslint.vercel.app](https://team-ignite-accesslint.vercel.app)
-- 🚀 **Live Demo Pull Request**: [PR #5 (AccessLint Regression Audit in Action)](https://github.com/Shashank163007/Team-ignite-accesslint/pull/5)
 - 📦 **GitHub Marketplace Action**: `Shashank163007/Team-ignite-accesslint@main`
 
 ---
@@ -34,7 +33,7 @@ Running standard accessibility test suites or full-page audits against existing 
 
 ### The AccessLint Solution
 AccessLint provides **zero-config differential accessibility scanning**:
-1. **Live Headless Browser Auditing**: Tests real rendered DOM nodes with Playwright and `@axe-core/playwright`.
+1. **Live Headless Browser Auditing**: Tests real rendered DOM nodes with Playwright and `axe-core`.
 2. **Synthetic Keyboard Traversal**: Simulates genuine Tab and Shift+Tab keypresses to detect focus traps, missing focus indicators, and untabbable interactive controls.
 3. **Zero-False-Positive Fingerprinting**: Uses deterministic issue fingerprints (`route::rule::element`) to diff current PR findings against the base branch baseline.
 4. **Actionable PR Feedback**: Non-blocking on pre-existing debt; fails CI *only* when new accessibility regressions are introduced, while posting sticky, idempotent Markdown reviews directly on the PR.
@@ -115,8 +114,8 @@ flowchart TD
 
 Add AccessLint to your repository by creating `.github/workflows/accesslint.yml`:
 
-### Option A: Zero-Config Workflow (Recommended)
-Minimal setup for repositories with pre-built sites or deployed staging URLs:
+### Option A: Deployed or Pre-built Site (Recommended)
+For a deployed site or an application already available at a staging URL. A target URL is required:
 
 ```yaml
 name: AccessLint
@@ -134,6 +133,8 @@ jobs:
       - uses: Shashank163007/Team-ignite-accesslint@main
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
+          target-url: 'https://staging.example.com'
+          routes: '/'
 ```
 
 ### Option B: Full Application Audit (Local Dev Server & Custom Routes)
@@ -171,12 +172,15 @@ jobs:
       - name: Install Playwright Browsers
         run: npx playwright install chromium --with-deps
 
+      # Start your application before running the action.
+      - name: Start application
+        run: npm run start &
+
       - name: Run AccessLint
         uses: Shashank163007/Team-ignite-accesslint@main
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           target-url: 'http://localhost:3000'
-          start-command: 'npm run start'
           routes: '/,/about,/pricing'
           fail-on-new: 'true'
 ```
@@ -232,21 +236,11 @@ npx playwright install chromium
 ```
 
 ### 4. Run the end-to-end verification pipeline
-Audit all built-in test fixtures, run live DOM checks, execute keyboard navigation sweeps, and compute baseline diffs:
+Audit the first built-in HTML fixture, run live DOM checks, execute keyboard navigation sweeps, and compute baseline diffs:
 ```bash
 npm test
 # or
 node tests/verify-pipeline.js
-```
-
-### 5. View the visual demo artifact
-Open the self-contained HTML demo preview:
-```bash
-npm run preview
-# or open directly in your browser:
-# Windows: start tests/demo-preview.html
-# macOS:   open tests/demo-preview.html
-# Linux:   xdg-open tests/demo-preview.html
 ```
 
 ---
