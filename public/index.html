@@ -11,27 +11,33 @@
         theme: {
           extend: {
             colors: { ink: '#0a0a0a', mint: '#5eead4', violet: '#a78bfa' },
-            boxShadow: { glow: '0 0 60px rgba(94, 234, 212, 0.12)' }
           }
         }
       };
     </script>
     <style>
       :root { --skew-angle: -2deg; }
-      body { background-image: linear-gradient(115deg, rgba(94,234,212,.035) 1px, transparent 1px), linear-gradient(25deg, rgba(167,139,250,.025) 1px, transparent 1px); background-size: 42px 42px; }
-      .skew-panel { transform: skewY(var(--skew-angle)); border-radius: 1rem 0.35rem 1rem 0.35rem; box-shadow: 10px 12px 0 rgba(94,234,212,.06), 0 20px 70px rgba(0,0,0,.28); transition: transform .25s ease, border-color .25s ease, box-shadow .25s ease; }
+      body { background: #f4f0e8; color: #111; }
+      .skew-panel { transform: skewY(var(--skew-angle)); border: 3px solid #111; border-radius: 0; box-shadow: 9px 9px 0 #111; transition: transform .2s ease, box-shadow .2s ease; }
       .skew-panel > * { transform: skewY(calc(var(--skew-angle) * -1)); }
-      .skew-panel:hover { transform: skewY(0deg) translateY(-5px); border-color: rgba(94,234,212,.45); box-shadow: 14px 18px 0 rgba(167,139,250,.08), 0 24px 80px rgba(0,0,0,.4); }
-      .skew-button { transform: skewX(-10deg); border-radius: .35rem; }
+      .skew-panel:hover { transform: skewY(0deg) translate(-3px, -3px); box-shadow: 12px 12px 0 #111; }
+      .skew-button { transform: skewX(-10deg); border-radius: 0; border: 3px solid #111; box-shadow: 5px 5px 0 #111; }
       .skew-button > span { display: inline-block; transform: skewX(10deg); }
       .skew-edge { clip-path: polygon(0 0, 100% 0, 96% 100%, 0 100%); }
-      .skew-rule { height: 1px; background: linear-gradient(90deg, transparent, #5eead4 22%, #a78bfa 78%, transparent); transform: skewX(-28deg); }
+      .skew-rule { height: 4px; background: #111; transform: skewX(-28deg); }
+      body .text-white, body .text-neutral-100, body .text-neutral-200, body .text-neutral-300 { color: #111 !important; }
+      body .text-neutral-400, body .text-neutral-500 { color: #333 !important; }
+      body .text-teal-200, body .text-teal-300, body .text-violet-200, body .text-violet-300, body .text-amber-300 { color: #111 !important; }
+      body .bg-neutral-900, body .bg-neutral-950, body .bg-\[\#0d1117\] { background-color: #fff !important; }
+      body .border-neutral-700, body .border-neutral-800, body .border-neutral-900 { border-color: #111 !important; }
+      body .bg-teal-300 { background-color: #ffdc4a !important; }
+      body .bg-emerald-400\/10 { background-color: #9ee493 !important; border: 2px solid #111; }
+      body [class*="rounded"] { border-radius: 0 !important; }
     </style>
   </head>
-  <body class="bg-neutral-950 text-neutral-100 font-sans antialiased selection:bg-teal-300 selection:text-neutral-950">
+  <body class="bg-[#f4f0e8] text-neutral-950 font-sans antialiased selection:bg-yellow-300 selection:text-neutral-950">
     <div class="pointer-events-none fixed inset-0 -z-10 overflow-hidden">
-      <div class="absolute left-1/2 top-[-20rem] h-[40rem] w-[40rem] -translate-x-1/2 rounded-full bg-teal-400/10 blur-3xl"></div>
-      <div class="absolute right-[-10rem] top-[30rem] h-[25rem] w-[25rem] rounded-full bg-violet-500/10 blur-3xl"></div>
+      <div class="absolute left-1/2 top-[-20rem] h-[24rem] w-[24rem] -translate-x-1/2 border-[3px] border-black bg-yellow-300"></div>
     </div>
 
     <header class="mx-auto flex max-w-7xl items-center justify-between px-6 py-6 lg:px-8">
@@ -48,8 +54,8 @@
 
     <main id="top">
       <section class="mx-auto max-w-5xl px-6 pb-24 pt-20 text-center lg:pt-32">
-        <div class="skew-edge mx-auto mb-8 inline-flex items-center gap-2 border border-teal-300/20 bg-teal-300/5 px-4 py-2 text-xs font-medium text-teal-200">
-          <span class="h-2 w-2 rounded-full bg-teal-300 shadow-[0_0_12px_#5eead4]"></span> Built for teams shipping fast
+        <div class="skew-edge mx-auto mb-8 inline-flex items-center gap-2 border-[3px] border-black bg-yellow-300 px-4 py-2 text-xs font-bold text-black shadow-[4px_4px_0_#111]">
+          <span class="h-2 w-2 bg-black"></span> Built for teams shipping fast
         </div>
         <h1 class="text-5xl font-semibold tracking-[-0.04em] text-white sm:text-7xl">Catch accessibility regressions in CI <span class="text-teal-300">before they hit production.</span></h1>
         <p class="mx-auto mt-8 max-w-2xl text-lg leading-8 text-neutral-400">Zero-config GitHub Action using Playwright &amp; axe-core. Audits the live hydrated DOM and uses deterministic diffing to eliminate alert fatigue.</p>
@@ -60,7 +66,7 @@
       </section>
 
       <section class="mx-auto grid max-w-7xl gap-4 px-6 pb-28 md:grid-cols-3 lg:px-8">
-        <article class="skew-panel rounded-2xl border border-neutral-800 bg-neutral-900/50 p-7 shadow-glow"><div class="mb-8 text-2xl text-teal-300">◎</div><h2 class="text-lg font-semibold">Live DOM &amp; Keyboard Checks</h2><p class="mt-3 text-sm leading-6 text-neutral-400">Playwright + axe-core plus sequential Tab navigation catches issues that static source scans miss.</p></article>
+        <article class="skew-panel rounded-2xl border border-neutral-800 bg-neutral-900/50 p-7"><div class="mb-8 text-2xl text-teal-300">◎</div><h2 class="text-lg font-semibold">Live DOM &amp; Keyboard Checks</h2><p class="mt-3 text-sm leading-6 text-neutral-400">Playwright + axe-core plus sequential Tab navigation catches issues that static source scans miss.</p></article>
         <article class="skew-panel rounded-2xl border border-neutral-800 bg-neutral-900/50 p-7"><div class="mb-8 text-2xl text-violet-300">⌘</div><h2 class="text-lg font-semibold">Deterministic Fingerprinting</h2><p class="mt-3 text-sm leading-6 text-neutral-400"><code class="text-violet-200">route::rule::element</code> ignores pre-existing baseline debt and focuses reviews on regressions.</p></article>
         <article class="skew-panel rounded-2xl border border-neutral-800 bg-neutral-900/50 p-7"><div class="mb-8 text-2xl text-amber-300">↻</div><h2 class="text-lg font-semibold">Sticky PR Reporting</h2><p class="mt-3 text-sm leading-6 text-neutral-400">Updates one clean report in place, without polluting PR conversations with repeated bot comments.</p></article>
       </section>
