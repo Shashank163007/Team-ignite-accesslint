@@ -10,9 +10,10 @@
  * Output:
  *   {
  *     newIssues:       violations in PR but not in base  (regressions)
+ *     existingIssues:   violations present in both
  *     fixedIssues:     violations in base but not in PR  (improvements)
- *     unchangedIssues: violations present in both
  *     counts:          numeric totals, including a per-severity breakdown
+ *     stats:           compatibility shape used by the action runner
  *   }
  */
 
@@ -103,8 +104,9 @@ function compareResults(baseViolations = [], prViolations = []) {
 
   return {
     newIssues: sortedNew,
-    fixedIssues: sortedFixed,
+    existingIssues: sortedUnchanged,
     unchangedIssues: sortedUnchanged,
+    fixedIssues: sortedFixed,
     counts: {
       base: baseMap.size,
       pr: prMap.size,
@@ -112,6 +114,11 @@ function compareResults(baseViolations = [], prViolations = []) {
       fixed: sortedFixed.length,
       unchanged: sortedUnchanged.length,
       newBySeverity: countBySeverity(sortedNew),
+    },
+    stats: {
+      newCount: sortedNew.length,
+      existingCount: sortedUnchanged.length,
+      fixedCount: sortedFixed.length,
     },
   };
 }
