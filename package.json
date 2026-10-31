@@ -5,7 +5,9 @@
   "main": "src/action/index.js",
   "scripts": {
     "start": "node src/action/index.js",
-    "test": "node -e \"console.log('Testing scaffold')\""
+    "test": "node tests/verify-pipeline.js",
+    "verify": "node tests/verify-pipeline.js",
+    "preview": "node -e \"const { exec } = require('child_process'); const p = 'tests/demo-preview.html'; const cmd = process.platform === 'win32' ? `start ${p}` : process.platform === 'darwin' ? `open ${p}` : `xdg-open ${p}`; exec(cmd, () => console.log('Opened ' + p));\""
   },
   "keywords": [
     "accessibility",

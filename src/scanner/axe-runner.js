@@ -1,3 +1,7 @@
+'use strict';
+
+const axeCore = require('axe-core');
+
 const AXE_TIMEOUT_MS = 30_000;
 
 const textOr = (value, fallback) => typeof value === 'string' && value.trim() ? value : fallback;
@@ -5,19 +9,41 @@ const shadowTarget = (target) => Array.isArray(target)
   ? target.map(shadowTarget).join(' >>> ')
   : String(target);
 
+function normalizeParams(arg1, arg2, arg3) {
+  if (arg1 && typeof arg1 === 'object' && ('page' in arg1 || 'pagePath' in arg1)) {
+    return { page: arg1.page, pagePath: arg1.pagePath, onError: arg1.onError };
+  }
+  let pagePath = arg2;
+  if (typeof pagePath === 'string') {
+    try {
+      const parsed = new URL(pagePath);
+      pagePath = parsed.pathname;
+    } catch {
+      // already a path
+    }
+  }
+  return { page: arg1, pagePath, onError: arg3 };
+}
+
 /** Scan an already navigated page; preserve the caller's path as the comparison key. */
-export async function runAxe({ page, pagePath, onError } = {}) {
+async function runAxe(arg1, arg2, arg3) {
+  const { page, pagePath: rawPagePath, onError } = normalizeParams(arg1, arg2, arg3);
+  let pagePath = rawPagePath;
   let timer;
   try {
+    if (typeof pagePath === 'string') {
+      try {
+        const parsed = new URL(pagePath);
+        pagePath = parsed.pathname;
+      } catch {}
+    }
     if (typeof pagePath !== 'string' || !pagePath.startsWith('/') || pagePath.startsWith('//') || /[?#\\]/.test(pagePath)) {
       throw new TypeError('pagePath must be a path-only string without a host, query, or fragment');
     }
     const scan = async () => {
-      // Import inside the guarded operation so package/injection failures use onError too.
-      const { default: axe } = await import('axe-core');
       // Reinjection uses the installed version and resets axe for repeat scans.
       // Inject frames as well so axe can collect their violations from the top page.
-      await Promise.all(page.frames().map((frame) => frame.evaluate(axe.source)));
+      await Promise.all(page.frames().map((frame) => frame.evaluate(axeCore.source)));
       return page.evaluate(async () => window.axe.run(document, { resultTypes: ['violations'] }));
     };
     const results = await Promise.race([
@@ -59,3 +85,8 @@ export async function runAxe({ page, pagePath, onError } = {}) {
     clearTimeout(timer);
   }
 }
+
+module.exports = {
+  runAxe,
+  runAxeScan: runAxe,
+};
