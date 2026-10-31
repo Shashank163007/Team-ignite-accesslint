@@ -5,7 +5,6 @@
   "main": "src/action/index.js",
   "scripts": {
     "start": "node src/action/index.js",
-    "build": "echo 'Static build ready'",
     "test": "node -e \"console.log('Testing scaffold')\""
   },
   "keywords": [
