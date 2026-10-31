@@ -31,6 +31,9 @@
       body .bg-neutral-900, body .bg-neutral-950, body .bg-\[\#0d1117\] { background-color: #fff !important; }
       body .border-neutral-700, body .border-neutral-800, body .border-neutral-900 { border-color: #111 !important; }
       body .bg-teal-300 { background-color: #ffdc4a !important; }
+      body a:hover, body button:hover { color: #111 !important; }
+      body .skew-button:hover { background-color: #ff8a65 !important; border-color: #111 !important; }
+      body nav a:hover { background-color: #9ee493; text-decoration: underline; }
       body .bg-emerald-400\/10 { background-color: #9ee493 !important; border: 2px solid #111; }
       body [class*="rounded"] { border-radius: 0 !important; }
     </style>
@@ -41,13 +44,13 @@
 
     <header class="mx-auto flex max-w-7xl items-center justify-between px-6 py-6 lg:px-8">
       <a href="#top" class="flex items-center gap-3 text-lg font-semibold tracking-tight">
-        <span class="text-2xl">♿</span> AccessLint
+        AccessLint
         <span class="hidden rounded-full border border-neutral-800 bg-neutral-900 px-3 py-1 text-[10px] font-medium uppercase tracking-[0.18em] text-neutral-400 sm:inline-block">Team Ignite • Devf8rge 2026</span>
       </a>
       <nav class="hidden items-center gap-8 text-sm text-neutral-400 md:flex">
-        <a class="transition hover:text-white" href="#quickstart">Docs</a>
-        <a class="transition hover:text-white" href="https://github.com/Shashank163007/Team-ignite-accesslint/pull/5">Live PR Demo</a>
-        <a class="rounded-full border border-neutral-700 px-4 py-2 text-neutral-100 transition hover:border-teal-300 hover:text-teal-200" href="https://github.com/Shashank163007/Team-ignite-accesslint">GitHub ↗</a>
+        <a class="transition hover:bg-[#9ee493] hover:text-black" href="#quickstart">Docs</a>
+        <a class="transition hover:bg-[#9ee493] hover:text-black" href="https://github.com/Shashank163007/Team-ignite-accesslint/pull/5">Live PR Demo</a>
+        <a class="rounded-full border border-neutral-700 px-4 py-2 text-neutral-100 transition hover:border-black hover:bg-[#9ee493] hover:text-black" href="https://github.com/Shashank163007/Team-ignite-accesslint">GitHub ↗</a>
       </nav>
     </header>
 
@@ -59,7 +62,7 @@
         <h1 class="text-5xl font-semibold tracking-[-0.04em] text-white sm:text-7xl">Catch accessibility regressions in CI <span class="text-teal-300">before they hit production.</span></h1>
         <p class="mx-auto mt-8 max-w-2xl text-lg leading-8 text-neutral-400">Zero-config GitHub Action using Playwright &amp; axe-core. Audits the live hydrated DOM and uses deterministic diffing to eliminate alert fatigue.</p>
         <div class="mt-10 flex flex-col items-center justify-center gap-4 sm:flex-row">
-          <a href="https://github.com/Shashank163007/Team-ignite-accesslint" class="skew-button w-full bg-teal-300 px-6 py-3 font-semibold text-neutral-950 transition hover:bg-teal-200 sm:w-auto"><span>View on GitHub ↗</span></a>
+          <a href="https://github.com/Shashank163007/Team-ignite-accesslint" class="skew-button w-full bg-teal-300 px-6 py-3 font-semibold text-neutral-950 transition hover:bg-orange-300 sm:w-auto"><span>View on GitHub ↗</span></a>
           <a href="https://github.com/Shashank163007/Team-ignite-accesslint/pull/5" class="skew-button w-full border border-neutral-700 px-6 py-3 font-semibold text-white transition hover:border-neutral-400 sm:w-auto"><span>See Live PR #5 Demo</span></a>
         </div>
       </section>
@@ -74,13 +77,13 @@
         <div class="mb-8 flex items-end justify-between"><div><p class="text-sm font-medium text-teal-300">WHAT YOUR TEAM SEES</p><h2 class="mt-2 text-3xl font-semibold tracking-tight">A report developers can act on.</h2></div><span class="hidden text-sm text-neutral-500 sm:block">GitHub Pull Request</span></div>
         <div class="skew-panel overflow-hidden rounded-2xl border border-neutral-800 bg-[#0d1117] shadow-2xl">
           <div class="flex items-center gap-2 border-b border-neutral-800 px-5 py-4"><span class="h-3 w-3 rounded-full bg-red-400/80"></span><span class="h-3 w-3 rounded-full bg-yellow-400/80"></span><span class="h-3 w-3 rounded-full bg-green-400/80"></span><span class="ml-3 text-xs text-neutral-500">accesslint-report.md</span></div>
-          <div class="space-y-5 p-6 font-mono text-sm"><p class="text-neutral-500">&lt;!-- accesslint-report --&gt;</p><h3 class="font-sans text-xl font-semibold">♿ AccessLint Report</h3><div class="inline-flex rounded-full bg-emerald-400/10 px-3 py-1 font-sans text-xs font-medium text-emerald-300">✓ 0 Baseline Regressions</div><div class="overflow-x-auto"><table class="w-full min-w-[650px] text-left text-xs"><thead class="border-b border-neutral-800 text-neutral-500"><tr><th class="py-3 pr-4">Severity</th><th class="py-3 pr-4">Rule</th><th class="py-3 pr-4">Page</th><th class="py-3 pr-4">Element</th><th class="py-3">Suggested fix</th></tr></thead><tbody><tr class="border-b border-neutral-800/70"><td class="py-4 pr-4 text-orange-300">● Serious</td><td class="py-4 pr-4 text-teal-200">color-contrast</td><td class="py-4 pr-4 text-neutral-300">/fixtures/bad-contrast.html</td><td class="py-4 pr-4 text-violet-200">#low-contrast-text</td><td class="py-4 text-neutral-400">Increase foreground/background contrast to 4.5:1.</td></tr></tbody></table></div></div>
+          <div class="space-y-5 p-6 font-mono text-sm"><p class="text-neutral-500">&lt;!-- accesslint-report --&gt;</p><h3 class="font-sans text-xl font-semibold">AccessLint Report</h3><div class="inline-flex rounded-full bg-emerald-400/10 px-3 py-1 font-sans text-xs font-medium text-neutral-950">✓ 0 Baseline Regressions</div><div class="overflow-x-auto"><table class="w-full min-w-[650px] text-left text-xs"><thead class="border-b border-neutral-800 text-neutral-500"><tr><th class="py-3 pr-4">Severity</th><th class="py-3 pr-4">Rule</th><th class="py-3 pr-4">Page</th><th class="py-3 pr-4">Element</th><th class="py-3">Suggested fix</th></tr></thead><tbody><tr class="border-b border-neutral-800/70"><td class="py-4 pr-4 text-orange-300">● Serious</td><td class="py-4 pr-4 text-teal-200">color-contrast</td><td class="py-4 pr-4 text-neutral-300">/fixtures/bad-contrast.html</td><td class="py-4 pr-4 text-violet-200">#low-contrast-text</td><td class="py-4 text-neutral-400">Increase foreground/background contrast to 4.5:1.</td></tr></tbody></table></div></div>
         </div>
       </section>
 
       <section id="quickstart" class="mx-auto max-w-3xl px-6 pb-32">
         <div class="text-center"><p class="text-sm font-medium text-teal-300">QUICKSTART</p><h2 class="mt-2 text-3xl font-semibold tracking-tight">One workflow. Continuous confidence.</h2><p class="mt-4 text-neutral-400">Drop this into your repository and let every pull request prove its accessibility.</p></div>
-        <div class="skew-panel mt-10 overflow-hidden rounded-2xl border border-neutral-800 bg-neutral-900"><div class="flex items-center justify-between border-b border-neutral-800 px-5 py-3"><span class="font-mono text-xs text-neutral-500">.github/workflows/accesslint.yml</span><button id="copy-yaml" class="skew-button border border-neutral-700 px-3 py-1.5 text-xs font-medium text-neutral-300 transition hover:border-teal-300 hover:text-teal-200"><span>Copy YAML</span></button></div><pre class="overflow-x-auto p-6 text-sm leading-7 text-neutral-300"><code id="yaml-snippet">name: AccessLint
+        <div class="skew-panel mt-10 overflow-hidden rounded-2xl border border-neutral-800 bg-neutral-900"><div class="flex items-center justify-between border-b border-neutral-800 px-5 py-3"><span class="font-mono text-xs text-neutral-500">.github/workflows/accesslint.yml</span><button id="copy-yaml" class="skew-button border border-neutral-700 px-3 py-1.5 text-xs font-medium text-neutral-300 transition hover:border-black hover:bg-[#9ee493] hover:text-black"><span>Copy YAML</span></button></div><pre class="overflow-x-auto p-6 text-sm leading-7 text-neutral-300"><code id="yaml-snippet">name: AccessLint
 on: [pull_request]
 
 jobs:
@@ -94,7 +97,7 @@ jobs:
       </section>
     </main>
 
-    <footer class="border-t border-neutral-900"><div class="mx-auto flex max-w-7xl flex-col gap-4 px-6 py-8 text-sm text-neutral-500 sm:flex-row sm:items-center sm:justify-between lg:px-8"><p>Made with care by <span class="text-neutral-300">Shashank · Pratyaksh · Mohammed · Chathan</span></p><a class="transition hover:text-teal-300" href="https://opensource.org/license/mit">MIT License ↗</a></div></footer>
+    <footer class="border-t border-neutral-900"><div class="mx-auto flex max-w-7xl flex-col gap-4 px-6 py-8 text-sm text-neutral-500 sm:flex-row sm:items-center sm:justify-between lg:px-8"><p>Made with care by <span class="text-neutral-300">Shashank · Pratyaksh · Mohammed · Chathan</span></p><a class="transition hover:bg-[#9ee493] hover:text-black" href="https://opensource.org/license/mit">MIT License ↗</a></div></footer>
     <script>
       document.getElementById('copy-yaml').addEventListener('click', async function () {
         const button = this;
