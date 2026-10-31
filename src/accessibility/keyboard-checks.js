@@ -1,8 +1,28 @@
+'use strict';
+
 const KEYBOARD_TIMEOUT_MS = 30_000;
 const MAX_TAB_PRESSES = 100;
 
+function normalizeParams(arg1, arg2, arg3) {
+  if (arg1 && typeof arg1 === 'object' && ('page' in arg1 || 'pagePath' in arg1)) {
+    return { page: arg1.page, pagePath: arg1.pagePath, onError: arg1.onError };
+  }
+  let pagePath = arg2;
+  if (typeof pagePath === 'string') {
+    try {
+      const parsed = new URL(pagePath);
+      pagePath = parsed.pathname;
+    } catch {
+      // already a path
+    }
+  }
+  return { page: arg1, pagePath, onError: arg3 };
+}
+
 /** Check the current light DOM with real key presses; S1 owns navigation and cleanup. */
-export async function runKeyboardChecks({ page, pagePath, onError } = {}) {
+async function runKeyboardChecks(arg1, arg2, arg3) {
+  const { page, pagePath: rawPagePath, onError } = normalizeParams(arg1, arg2, arg3);
+  let pagePath = rawPagePath;
   let timer;
   let cancelled = false;
   const report = async (message) => {
@@ -164,6 +184,12 @@ export async function runKeyboardChecks({ page, pagePath, onError } = {}) {
     }
   };
   try {
+    if (typeof pagePath === 'string') {
+      try {
+        const parsed = new URL(pagePath);
+        pagePath = parsed.pathname;
+      } catch {}
+    }
     if (typeof pagePath !== 'string' || !pagePath.startsWith('/') || pagePath.startsWith('//') || /[?#\\]/.test(pagePath)) {
       throw new TypeError('pagePath must be a path-only string without a host, query, or fragment');
     }
@@ -184,3 +210,7 @@ export async function runKeyboardChecks({ page, pagePath, onError } = {}) {
     clearTimeout(timer);
   }
 }
+
+module.exports = {
+  runKeyboardChecks,
+};

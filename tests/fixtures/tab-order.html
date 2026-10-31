@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>AccessLint Tab Order & Keyboard Navigation Fixture</title>
+    <style>
+      :root {
+        background: #ffffff;
+        color: #1f2937;
+        font-family: Arial, sans-serif;
+        line-height: 1.5;
+      }
+
+      body {
+        margin: 0 auto;
+        max-width: 60rem;
+        padding: 1rem;
+      }
+
+      button,
+      .custom-btn {
+        display: inline-block;
+        padding: 0.5rem 1rem;
+        margin: 0.5rem;
+        font-size: 1rem;
+        border-radius: 4px;
+        cursor: pointer;
+      }
+
+      .no-focus-style:focus,
+      .no-focus-style:focus-visible {
+        outline: none !important;
+        box-shadow: none !important;
+      }
+
+      .custom-btn {
+        background: #2563eb;
+        color: #ffffff;
+        border: none;
+      }
+    </style>
+  </head>
+  <body>
+    <main>
+      <h1>Keyboard navigation & tab order test page</h1>
+      <p>
+        This page contains intentional keyboard accessibility failures including
+        untabbable interactive controls, positive tabindex values, and missing focus indicators.
+      </p>
+
+      <section>
+        <h2>Test Controls</h2>
+        <!-- Positive tabindex disrupts normal logical tab flow -->
+        <button id="button-positive-tabindex" name="btn-positive-tabindex" data-testid="button-positive-tabindex" tabindex="3" type="button">
+          Skip ahead button (tabindex 3)
+        </button>
+
+        <!-- Button with stripped focus style -->
+        <button id="no-focus-indicator-btn" name="btn-no-focus-indicator" data-testid="no-focus-indicator-btn" class="no-focus-style" type="button">
+          Button without visible focus indicator
+        </button>
+
+        <!-- Interactive element without keyboard reachability -->
+        <div id="untabbable-button" role="button" data-testid="untabbable-button" class="custom-btn" onclick="console.log('clicked')">
+          Untabbable Custom Div Button
+        </div>
+      </section>
+    </main>
+  </body>
+</html>

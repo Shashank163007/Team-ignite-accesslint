@@ -1,0 +1,432 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>AccessLint Audit Report Demo Preview</title>
+    <style>
+      :root {
+        --bg-canvas: #f4f0e8;
+        --bg-panel: #ffffff;
+        --border-color: #111111;
+        --text-primary: #111111;
+        --text-secondary: #333333;
+        --accent-yellow: #ffdc4a;
+        --accent-green: #9ee493;
+        --accent-orange: #ff8a65;
+        --accent-blue: #70a9ff;
+        --font-mono: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, "Liberation Mono", monospace;
+        --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans", Helvetica, Arial, sans-serif;
+      }
+
+      * { box-sizing: border-box; margin: 0; padding: 0; }
+
+      body {
+        background-color: var(--bg-canvas);
+        color: var(--text-primary);
+        font-family: var(--font-sans);
+        line-height: 1.6;
+        padding: 2.5rem 1.5rem;
+      }
+
+      .container { max-width: 1050px; margin: 0 auto; }
+
+      header {
+        border: 3px solid var(--border-color);
+        background: var(--bg-panel);
+        padding: 2rem;
+        box-shadow: 8px 8px 0 var(--border-color);
+        margin-bottom: 2.5rem;
+      }
+
+      .header-title {
+        font-size: 2.2rem;
+        font-weight: 800;
+        letter-spacing: -0.03em;
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+      }
+
+      .tagline {
+        color: var(--text-secondary);
+        font-size: 1.1rem;
+        margin-top: 0.5rem;
+        font-weight: 500;
+      }
+
+      .badges {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.6rem;
+        margin-top: 1rem;
+      }
+
+      .badge {
+        font-family: var(--font-mono);
+        font-size: 0.75rem;
+        font-weight: 700;
+        padding: 0.25rem 0.65rem;
+        border: 2px solid var(--border-color);
+        box-shadow: 2px 2px 0 var(--border-color);
+        text-transform: uppercase;
+      }
+
+      .badge-yellow { background: var(--accent-yellow); }
+      .badge-green { background: var(--accent-green); }
+      .badge-blue { background: var(--accent-blue); }
+
+      /* Metrics Grid */
+      .metrics-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+        gap: 1.25rem;
+        margin-bottom: 2.5rem;
+      }
+
+      .metric-card {
+        background: var(--bg-panel);
+        border: 3px solid var(--border-color);
+        box-shadow: 6px 6px 0 var(--border-color);
+        padding: 1.5rem 1rem;
+        text-align: center;
+      }
+
+      .metric-value {
+        font-size: 2.5rem;
+        font-weight: 800;
+        font-family: var(--font-mono);
+      }
+
+      .metric-label {
+        font-size: 0.85rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        margin-top: 0.35rem;
+        color: var(--text-secondary);
+      }
+
+      /* Sections */
+      h2.section-heading {
+        font-size: 1.5rem;
+        font-weight: 800;
+        margin-bottom: 1.25rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+      }
+
+      /* GitHub PR Box */
+      .github-box {
+        background: var(--bg-panel);
+        border: 3px solid var(--border-color);
+        box-shadow: 8px 8px 0 var(--border-color);
+        margin-bottom: 2.5rem;
+      }
+
+      .box-header {
+        background: var(--accent-yellow);
+        border-bottom: 3px solid var(--border-color);
+        padding: 0.85rem 1.25rem;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        font-weight: 700;
+        font-size: 0.9rem;
+      }
+
+      .box-content { padding: 1.75rem; }
+
+      .box-content h3 { font-size: 1.3rem; margin-bottom: 0.75rem; font-weight: 800; }
+      .box-content p { color: var(--text-secondary); margin-bottom: 1rem; font-size: 0.95rem; }
+
+      /* Data Table */
+      .data-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin: 1.25rem 0;
+        font-size: 0.9rem;
+      }
+
+      .data-table th, .data-table td {
+        border: 2px solid var(--border-color);
+        padding: 0.75rem 0.9rem;
+        text-align: left;
+      }
+
+      .data-table th { background: #eae5dc; font-weight: 800; }
+      .data-table td { background: var(--bg-panel); }
+
+      .pill {
+        display: inline-block;
+        padding: 0.15rem 0.5rem;
+        font-weight: 700;
+        font-size: 0.75rem;
+        border: 1px solid var(--border-color);
+        font-family: var(--font-mono);
+      }
+
+      .pill-critical { background: #ff5252; color: #fff; }
+      .pill-serious { background: var(--accent-orange); }
+
+      code {
+        font-family: var(--font-mono);
+        font-size: 0.85em;
+        background: #e2ddd3;
+        padding: 0.15rem 0.35rem;
+        border: 1px solid var(--border-color);
+      }
+
+      /* Collapsible Details */
+      details {
+        border: 2px solid var(--border-color);
+        padding: 0.75rem 1rem;
+        margin-top: 1.25rem;
+        background: #fbf9f5;
+      }
+
+      details summary {
+        cursor: pointer;
+        font-weight: 700;
+        font-size: 0.9rem;
+      }
+
+      /* Findings Cards */
+      .findings-list { display: flex; flex-direction: column; gap: 1.5rem; margin-bottom: 2.5rem; }
+
+      .finding-card {
+        background: var(--bg-panel);
+        border: 3px solid var(--border-color);
+        box-shadow: 6px 6px 0 var(--border-color);
+        padding: 1.5rem;
+      }
+
+      .finding-card.critical-card {
+        border-top: 8px solid #ff5252;
+      }
+
+      .finding-card.serious-card {
+        border-top: 8px solid var(--accent-orange);
+      }
+
+      .finding-head {
+        display: flex;
+        justify-content: space-between;
+        align-items: baseline;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+        margin-bottom: 0.75rem;
+      }
+
+      .finding-title { font-size: 1.2rem; font-weight: 800; }
+
+      .code-block {
+        background: #111;
+        color: #f4f0e8;
+        font-family: var(--font-mono);
+        font-size: 0.85rem;
+        padding: 1rem;
+        border: 2px solid var(--border-color);
+        overflow-x: auto;
+        margin: 0.75rem 0;
+      }
+
+      .fix-box {
+        background: #eaffea;
+        border: 2px solid #2e7d32;
+        padding: 0.85rem 1rem;
+        margin-top: 0.75rem;
+      }
+
+      .fix-title {
+        font-weight: 800;
+        font-size: 0.8rem;
+        text-transform: uppercase;
+        color: #2e7d32;
+        margin-bottom: 0.3rem;
+      }
+
+      footer {
+        border-top: 3px solid var(--border-color);
+        padding-top: 1.5rem;
+        margin-top: 3rem;
+        text-align: center;
+        font-size: 0.9rem;
+        color: var(--text-secondary);
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <header>
+        <div class="header-title">
+          <span>♿</span> AccessLint Audit Report Preview
+        </div>
+        <p class="tagline">
+          Automated accessibility regression linter for GitHub Pull Requests powered by Playwright and axe-core.
+        </p>
+        <div class="badges">
+          <span class="badge badge-yellow">Devf8rge 2026 (PS-09)</span>
+          <span class="badge badge-green">MIT License</span>
+          <span class="badge badge-blue">Zero False Positives</span>
+        </div>
+      </header>
+
+      <!-- Metrics -->
+      <div class="metrics-grid">
+        <div class="metric-card">
+          <div class="metric-value">4</div>
+          <div class="metric-label">Fixtures Audited</div>
+        </div>
+        <div class="metric-card">
+          <div class="metric-value">5</div>
+          <div class="metric-label">Live Violations</div>
+        </div>
+        <div class="metric-card">
+          <div class="metric-value" style="color: #ff5252;">4</div>
+          <div class="metric-label">Regressions Flagged</div>
+        </div>
+        <div class="metric-card">
+          <div class="metric-value" style="color: #666;">1</div>
+          <div class="metric-label">Pre-existing Debt</div>
+        </div>
+      </div>
+
+      <!-- Simulated PR Box -->
+      <h2 class="section-heading">💬 Pull Request Comment (Simulated Bot Review)</h2>
+      <div class="github-box">
+        <div class="box-header">
+          <span>♿ AccessLint GitHub Actions Bot</span>
+          <span>Sticky Comment (Idempotent Update)</span>
+        </div>
+        <div class="box-content">
+          <h3>♿ AccessLint Report</h3>
+          <p>AccessLint ran automated DOM & synthetic keyboard navigation checks across all routes.</p>
+
+          <h4 style="color: #d32f2f; margin: 1.25rem 0 0.5rem; font-weight: 800;">❌ New accessibility issues (4)</h4>
+          <p>These issues were introduced by this pull request:</p>
+
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Severity</th>
+                <th>Rule</th>
+                <th>Page</th>
+                <th>Element</th>
+                <th>Suggested fix</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><span class="pill pill-critical">🔴 Critical</span></td>
+                <td><code>label</code></td>
+                <td><code>/fixtures/missing-label.html</code></td>
+                <td><code>#missing-label-input</code></td>
+                <td>Add an explicit <code>&lt;label for="..."&gt;</code> or an accessible <code>aria-label</code> attribute.</td>
+              </tr>
+              <tr>
+                <td><span class="pill pill-serious">🟠 Serious</span></td>
+                <td><code>keyboard-unreachable</code></td>
+                <td><code>/fixtures/tab-order.html</code></td>
+                <td><code>div[data-testid="untabbable-button"]</code></td>
+                <td>Use a native <code>&lt;button&gt;</code> element or provide <code>tabindex="0"</code> with Enter/Space keyboard handlers.</td>
+              </tr>
+              <tr>
+                <td><span class="pill pill-serious">🟠 Serious</span></td>
+                <td><code>keyboard-no-focus-indicator</code></td>
+                <td><code>/fixtures/tab-order.html</code></td>
+                <td><code>button[name="btn-no-focus-indicator"]</code></td>
+                <td>Add a visible <code>:focus-visible</code> outline style (e.g. <code>outline: 3px solid #111</code>).</td>
+              </tr>
+              <tr>
+                <td><span class="pill pill-serious">🟠 Serious</span></td>
+                <td><code>tabindex</code></td>
+                <td><code>/fixtures/tab-order.html</code></td>
+                <td><code>#button-positive-tabindex</code></td>
+                <td>Remove positive <code>tabindex="3"</code> to preserve natural DOM tab navigation order.</td>
+              </tr>
+            </tbody>
+          </table>
+
+          <details>
+            <summary>📋 Existing issues not changed by this PR (1 legacy baseline debt)</summary>
+            <table class="data-table" style="margin-top: 0.75rem;">
+              <thead>
+                <tr>
+                  <th>Severity</th>
+                  <th>Rule</th>
+                  <th>Page</th>
+                  <th>Element</th>
+                  <th>Suggested fix</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><span class="pill pill-serious">🟠 Serious</span></td>
+                  <td><code>color-contrast</code></td>
+                  <td><code>/fixtures/bad-contrast.html</code></td>
+                  <td><code>#low-contrast-text</code></td>
+                  <td>Increase text contrast to at least 4.5:1 against the background.</td>
+                </tr>
+              </tbody>
+            </table>
+          </details>
+        </div>
+      </div>
+
+      <!-- Violations List -->
+      <h2 class="section-heading">🔍 Flagged Snippets & Remediation</h2>
+      <div class="findings-list">
+        <div class="finding-card serious-card">
+          <div class="finding-head">
+            <span class="finding-title">1. Insufficient Color Contrast</span>
+            <span class="badge badge-yellow">WCAG 1.4.3 (AA)</span>
+          </div>
+          <p>Rule: <code>color-contrast</code> • Selector: <code>#low-contrast-text</code></p>
+          <div class="code-block">&lt;p class="contrast-failure" id="low-contrast-text"&gt;
+  This text has insufficient contrast against its white background.
+&lt;/p&gt;</div>
+          <div class="fix-box">
+            <div class="fix-title">✅ Suggested Fix</div>
+            <code>&lt;p style="color: #4b5563; background: #ffffff;" id="low-contrast-text"&gt;...&lt;/p&gt;</code>
+          </div>
+        </div>
+
+        <div class="finding-card critical-card">
+          <div class="finding-head">
+            <span class="finding-title">2. Missing Form Label</span>
+            <span class="badge badge-yellow">WCAG 1.3.1 (A)</span>
+          </div>
+          <p>Rule: <code>label</code> • Selector: <code>#missing-label-input</code></p>
+          <div class="code-block">&lt;form action="#" method="post"&gt;
+  &lt;input id="missing-label-input" name="search" type="search"&gt;
+  &lt;button type="submit"&gt;Search&lt;/button&gt;
+&lt;/form&gt;</div>
+          <div class="fix-box">
+            <div class="fix-title">✅ Suggested Fix</div>
+            <code>&lt;label for="missing-label-input"&gt;Search&lt;/label&gt;&lt;input id="missing-label-input" name="search" type="search"&gt;</code>
+          </div>
+        </div>
+
+        <div class="finding-card serious-card">
+          <div class="finding-head">
+            <span class="finding-title">3. Untabbable Interactive Control</span>
+            <span class="badge badge-yellow">WCAG 2.1.1 (A)</span>
+          </div>
+          <p>Rule: <code>keyboard-unreachable</code> • Selector: <code>div[data-testid="untabbable-button"]</code></p>
+          <div class="code-block">&lt;div id="untabbable-button" role="button" data-testid="untabbable-button" class="custom-btn" onclick="..."&gt;
+  Untabbable Custom Div Button
+&lt;/div&gt;</div>
+          <div class="fix-box">
+            <div class="fix-title">✅ Suggested Fix</div>
+            <code>&lt;button id="untabbable-button" type="button" class="custom-btn"&gt;Accessible Native Button&lt;/button&gt;</code>
+          </div>
+        </div>
+      </div>
+
+      <footer>
+        <p>Made with care by <strong>Team Ignite</strong> (Shashank · Pratyaksh · Mohammed · Chathan)</p>
+      </footer>
+    </div>
+  </body>
+</html>

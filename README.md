@@ -13,8 +13,8 @@
 
 ## 🌟 Live Demos & Links
 
+- 🌐 **Live Hosted Landing Page**: [team-ignite-accesslint.vercel.app](https://team-ignite-accesslint.vercel.app)
 - 🚀 **Live Demo Pull Request**: [PR #5 (AccessLint Regression Audit in Action)](https://github.com/Shashank163007/Team-ignite-accesslint/pull/5)
-- 🌐 **Live Hosted Visual Preview**: [team-ignite-accesslint.vercel.app](https://team-ignite-accesslint.vercel.app)
 - 📦 **GitHub Marketplace Action**: `Shashank163007/Team-ignite-accesslint@main`
 
 ---
@@ -114,6 +114,30 @@ flowchart TD
 ## ⚡ Quickstart / Usage
 
 Add AccessLint to your repository by creating `.github/workflows/accesslint.yml`:
+
+### Option A: Zero-Config Workflow (Recommended)
+Minimal setup for repositories with pre-built sites or deployed staging URLs:
+
+```yaml
+name: AccessLint
+on: [pull_request]
+
+permissions:
+  contents: read
+  pull-requests: write # Required for sticky PR review comments
+
+jobs:
+  accessibility:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: Shashank163007/Team-ignite-accesslint@main
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+```
+
+### Option B: Full Application Audit (Local Dev Server & Custom Routes)
+For full-stack apps that need to be served locally before auditing:
 
 ```yaml
 name: Accessibility Linting

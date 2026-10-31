@@ -5,8 +5,10 @@
   "main": "src/action/index.js",
   "scripts": {
     "start": "node src/action/index.js",
-    "build": "mkdir -p public && cp -f index.html public/ 2>/dev/null || exit 0",
-    "test": "node -e \"console.log('Testing scaffold')\""
+    "build": "node -e \"const fs = require('fs'); fs.mkdirSync('public', { recursive: true }); fs.copyFileSync('index.html', 'public/index.html');\"",
+    "test": "node tests/verify-pipeline.js",
+    "verify": "node tests/verify-pipeline.js",
+    "preview": "node -e \"const { exec } = require('child_process'); const p = 'tests/demo-preview.html'; const cmd = process.platform === 'win32' ? 'start ' + p : process.platform === 'darwin' ? 'open ' + p : 'xdg-open ' + p; exec(cmd, () => console.log('Opened ' + p));\""
   },
   "keywords": [
     "accessibility",
