@@ -72,8 +72,9 @@ async function run() {
         const fullUrl = route.startsWith('http') ? route : `${baseUrl.replace(/\/$/, '')}${route}`;
         logger.info(`Auditing route: ${fullUrl}`);
 
-        if (scanner.axe?.runAxeScan) {
-          const axeIssues = await scanner.axe.runAxeScan(browserSession.page, fullUrl);
+        const axeFn = scanner.axe?.runAxe || scanner.axe?.runAxeScan;
+        if (axeFn) {
+          const axeIssues = await axeFn(browserSession.page, fullUrl);
           prScanResults.push(...(axeIssues || []));
         }
 
