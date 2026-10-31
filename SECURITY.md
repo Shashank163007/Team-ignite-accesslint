@@ -59,3 +59,4 @@ When auditing pull requests submitted from public forks:
 
 ### 3. Isolated Browser Execution
 AccessLint runs Playwright in headless Chromium within isolated sandbox boundaries, navigating only to designated target URLs and application routes. Ensure that target servers run in clean, throwaway CI container environments.
+
