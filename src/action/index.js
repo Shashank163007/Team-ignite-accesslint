@@ -108,27 +108,34 @@ async function run() {
 
     // 6. Compare results (identify newly introduced regressions)
     logger.group('Analyzing Scan Differences');
-    let diff = {
-      newIssues: prScanResults,
-      existingIssues: [],
-      fixedIssues: [],
-      stats: {
-        newCount: prScanResults.length,
-        existingCount: 0,
-        fixedCount: 0
-      }
-    };
-
+    let diff = {};
     if (comparison.compareResults) {
-      diff = comparison.compareResults(baseScanResults, prScanResults);
+      diff = comparison.compareResults(baseScanResults, prScanResults) || {};
     } else {
       const baseFingerprints = new Set(baseScanResults.map((b) => b.fingerprint));
       diff.newIssues = prScanResults.filter((p) => !baseFingerprints.has(p.fingerprint));
       diff.existingIssues = prScanResults.filter((p) => baseFingerprints.has(p.fingerprint));
-      diff.stats.newCount = diff.newIssues.length;
-      diff.stats.existingCount = diff.existingIssues.length;
     }
-    logger.info(`Found ${diff.newIssues.length} new issues, ${diff.existingIssues.length} existing issues.`);
+
+    // Defensive normalization for M2 output shapes
+    const newIssues = Array.isArray(diff.newIssues) ? diff.newIssues : (Array.isArray(diff.new) ? diff.new : []);
+    const existingIssues = Array.isArray(diff.existingIssues) ? diff.existingIssues : (Array.isArray(diff.existing) ? diff.existing : []);
+    const fixedIssues = Array.isArray(diff.fixedIssues) ? diff.fixedIssues : (Array.isArray(diff.fixed) ? diff.fixed : []);
+
+    diff = {
+      ...diff,
+      newIssues,
+      existingIssues,
+      fixedIssues,
+      stats: {
+        newCount: newIssues.length,
+        existingCount: existingIssues.length,
+        fixedCount: fixedIssues.length,
+        ...(diff.stats || {})
+      }
+    };
+
+    logger.info(`Found ${newIssues.length} new issues, ${existingIssues.length} existing issues.`);
     logger.endGroup();
 
     // 7. Format PR comment & GitHub Step Summary
