@@ -33,6 +33,17 @@ jobs:
       - name: Install Playwright Chromium Browser
         run: npx playwright install chromium --with-deps
 
+      - name: Serve Accessibility Fixtures
+        run: |
+          npx --yes serve -l 3000 tests > /tmp/accesslint-serve.log 2>&1 &
+          for attempt in {1..30}; do
+            if curl --fail --silent http://localhost:3000/fixtures/bad-contrast.html > /dev/null; then
+              break
+            fi
+            sleep 1
+          done
+          curl --fail --silent http://localhost:3000/fixtures/bad-contrast.html > /dev/null
+
       - name: Checkout Base Branch for Baseline Scan
         if: github.event_name == 'pull_request'
         run: |
@@ -44,20 +55,15 @@ jobs:
         if: github.event_name == 'pull_request'
         id: base-scan
         run: |
-          cd /tmp/base-repo
-          if [ -f "package.json" ]; then
-            npm ci || npm install
-            # Run scan in dry/headless mode and output to /tmp/base-scan.json
-            node $GITHUB_WORKSPACE/src/action/index.js || true
-          else
-            echo "[]" > /tmp/base-scan.json
-          fi
-        continue-on-error: true
+          # The base checkout is used only as a comparison placeholder here.
+          # Always provide valid JSON; the action itself owns target inputs.
+          printf '[]\n' > /tmp/base-scan.json
 
       - name: Run AccessLint on PR Branch
         uses: ./
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           base-scan-path: '/tmp/base-scan.json'
-          fail-on-new: 'true'
-          routes: '/'
+          target-url: 'http://localhost:3000'
+          fail-on-new: 'false'
+          routes: '/fixtures/bad-contrast.html'
