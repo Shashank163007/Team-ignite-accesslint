@@ -5,7 +5,7 @@
   "main": "src/action/index.js",
   "scripts": {
     "start": "node src/action/index.js",
-    "build": "echo 'Static build ready'",
+    "build": "mkdir -p public && cp -f index.html public/ 2>/dev/null || exit 0",
     "test": "node -e \"console.log('Testing scaffold')\""
   },
   "keywords": [
